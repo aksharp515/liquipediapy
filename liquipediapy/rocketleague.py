@@ -48,6 +48,21 @@ class rocketleague():
             tournaments.append(tournament)
         return tournaments
 
+    def get_high_tier_tournaments(self):
+        tournaments = []
+        rl_tournament_object = rl_tournament()
+        soup,__ = self.liquipedia.parse('Portal:Tournaments')		
+        tournaments_div = soup.find(id="S-Tier,_A-Tier,_B-Tier_and_C-Tier").parent.next_sibling.next_sibling
+        for tournament_content in tournaments_div.find_all('div', class_='divRow'):
+            tournament = {}
+            tournament['name'] = rl_tournament_object.get_tournament_name(tournament_content)
+            tournament['date'] = rl_tournament_object.get_tournament_date(tournament_content)
+            tournament['link'] = rl_tournament_object.get_tournament_link(tournament_content)
+            tournament_soup,__ = self.liquipedia.parse(str(tournament['link'].replace('/rocketleague/','')))
+            tournament['twitch_link'] = rl_tournament_object.get_tournament_twitch_link(tournament_soup)
+            tournaments.append(tournament)
+        return tournaments
+
 
     def get_top_teams(self, teams_of_interest=16):
         rl_top_team_object = rl_top_team()
